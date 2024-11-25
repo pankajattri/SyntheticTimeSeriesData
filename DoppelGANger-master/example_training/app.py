@@ -11,7 +11,7 @@ app = Flask(__name__)
 def upload_files(project_id):
     try:
         # Define the target folder dynamically
-        target_folder = f'/app/work/{project_id}/train_data'
+        target_folder = '/app/work/{}/train_data'.format(project_id)
         
         # Create the target folder if it doesn't exist
         os.makedirs(target_folder, exist_ok=True)
@@ -71,7 +71,7 @@ def run_model():
         # Run the GAN model with the parameters
         scheduler = GPUTaskScheduler(config=params, gpu_task_class=GANTask)
         scheduler.start()
-        results = {"status": "success","message": f"GAN model executed successfully. Model checkpoints stored in /app/work/{params["projectid"]}/train_data"}
+        results = {"status": "success","message": "GAN model executed successfully."}
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
