@@ -42,12 +42,12 @@ def upload_files(project_id):
     
     except Exception as e:
         # Return error response if something goes wrong
-        return jsonify({"error": f"File upload failed: {str(e)}"}), 500
+        return jsonify({"error": "File upload failed: {}".format(str(e))}), 500
 
 @app.route('/download/<project_id>/<filename>')
 def download_file(project_id, filename):
     # Construct the directory path dynamically using the project_id
-    directory = f'/app/results/{project_id}'
+    directory = '/app/work/{}/generated_data'.format(project_id)
     
     try:
         # Serve the requested file from the dynamically determined directory
