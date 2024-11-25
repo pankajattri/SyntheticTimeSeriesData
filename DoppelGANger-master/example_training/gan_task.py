@@ -20,7 +20,7 @@ class GANTask(GPUTask):
         (data_feature, data_attribute,
          data_gen_flag,
          data_feature_outputs, data_attribute_outputs) = \
-            load_data(os.path.join("..", "data", self._config["dataset"]))
+            load_data(os.path.join("/app/work", self._config["projectid"],"train_data"))
         print(data_feature.shape)
         print(data_attribute.shape)
         print(data_gen_flag.shape)
