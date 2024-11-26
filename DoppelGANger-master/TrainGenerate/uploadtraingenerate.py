@@ -4,7 +4,6 @@ import time, zipfile, io
 from flask import Flask, request, jsonify, Response, send_file
 from gan_task import GANTask
 from gan_generate_data_task import GANGenerateDataTask
-from config_generate_data import config
 from gpu_task_scheduler.gpu_task_scheduler import GPUTaskScheduler
 
 app = Flask(__name__)
