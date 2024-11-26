@@ -135,7 +135,7 @@ def full_workflow(project_id):
 def download_files(project_id):
     try:
         # Path to the synthetic data directory
-        synthetic_data_path = f'/app/work/{project_id}/generated_data'
+        synthetic_data_path = '/app/work/{}/generated_data'.format(project_id)
         
         # Check if the directory exists
         if not os.path.exists(synthetic_data_path):
@@ -158,7 +158,7 @@ def download_files(project_id):
             memory_file,
             mimetype='application/zip',
             as_attachment=True,
-            download_name=f'synthetic_data_{project_id}.zip'
+            download_name='synthetic_data_{}.zip'.format(project_id)
         )
     except Exception as e:
         return jsonify({"error": "Failed to download files: {}".format(str(e))}), 500
