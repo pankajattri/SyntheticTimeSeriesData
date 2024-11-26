@@ -22,7 +22,7 @@ class GANGenerateDataTask(GPUTask):
         (data_feature, data_attribute,
          data_gen_flag,
          data_feature_outputs, data_attribute_outputs) = \
-            load_data(os.path.join("..", "data", self._config["dataset"]))
+            load_data(os.path.join("..", "data", self._config["projectid"]))
         print(data_feature.shape)
         print(data_attribute.shape)
         print(data_gen_flag.shape)
@@ -144,22 +144,38 @@ class GANGenerateDataTask(GPUTask):
                 if not os.path.exists(mid_checkpoint_dir):
                     print("Not found {}".format(mid_checkpoint_dir))
                     continue
-
+                
+                ##### START ######
+                # Change save path to save file in a different folder
+                '''
                 save_path = os.path.join(
                     self._work_dir,
                     "generated_samples",
                     "epoch_id-{}".format(epoch_id))
+                '''
+                # Split the string by commas
+                key_value_pairs = self._work_dir.split(',')
+
+                sample_len_value = None
+                for pair in key_value_pairs:
+                    if pair.startswith("sample_len-"):
+                        sample_len_value = pair.split('-')[1]
+                        break
+                
+                save_path = os.path.join("app","work",self._config["projectid"],"generated_data")
+                #### FINISH ######
+
                 if not os.path.exists(save_path):
                     os.makedirs(save_path)
 
                 train_path_ori = os.path.join(
-                    save_path, "generated_data_train_ori.npz")
+                    save_path, "Sample_len_{}_Epoch_{}_generated_data_train_ori.npz".format(sample_len_value,epoch_id))
                 test_path_ori = os.path.join(
-                    save_path, "generated_data_test_ori.npz")
+                    save_path, "Sample_len_{}_Epoch_{}_generated_data_test_ori.npz".format(sample_len_value,epoch_id))
                 train_path = os.path.join(
-                    save_path, "generated_data_train.npz")
+                    save_path, "Sample_len_{}_Epoch_{}_generated_data_train.npz".format(sample_len_value,epoch_id))
                 test_path = os.path.join(
-                    save_path, "generated_data_test.npz")
+                    save_path, "Sample_len_{}_Epoch_{}_generated_data_test.npz".format(sample_len_value,epoch_id))
                 if os.path.exists(test_path):
                     print("Save_path {} exists".format(save_path))
                     continue
