@@ -127,7 +127,7 @@ def full_workflow(project_id):
 
             
         except Exception as e:
-            yield jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+            yield jsonify({"error": "An unexpected error occurred: {}".format(str(e))}), 500
 
     return Response(workflow_generator(), content_type="application/json")
 
@@ -139,7 +139,7 @@ def download_files(project_id):
         
         # Check if the directory exists
         if not os.path.exists(synthetic_data_path):
-            return jsonify({"error": f"No synthetic data found for project ID {project_id}"}), 404
+            return jsonify({"error": "No synthetic data found for project ID {}".format(project_id)}), 404
         
         # Create an in-memory ZIP file
         memory_file = io.BytesIO()
@@ -161,7 +161,7 @@ def download_files(project_id):
             download_name=f'synthetic_data_{project_id}.zip'
         )
     except Exception as e:
-        return jsonify({"error": f"Failed to download files: {str(e)}"}), 500
+        return jsonify({"error": "Failed to download files: {}".format(str(e))}), 500
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)  # Expose Flask app to the network
