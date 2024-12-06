@@ -22,7 +22,7 @@ class GANGenerateDataTask(GPUTask):
         (data_feature, data_attribute,
          data_gen_flag,
          data_feature_outputs, data_attribute_outputs) = \
-            load_data(os.path.join("..", "data", self._config["projectid"]))
+            load_data(os.path.join("/app/work", self._config["projectid"],"train_data"))
         print(data_feature.shape)
         print(data_attribute.shape)
         print(data_gen_flag.shape)
@@ -162,7 +162,8 @@ class GANGenerateDataTask(GPUTask):
                         sample_len_value = pair.split('-')[1]
                         break
                 
-                save_path = os.path.join("app","work",self._config["projectid"],"generated_data")
+                save_path = os.path.join("/app","work",self._config["projectid"],"generated_data")
+                print("Save path is: ", save_path)
                 #### FINISH ######
 
                 if not os.path.exists(save_path):
