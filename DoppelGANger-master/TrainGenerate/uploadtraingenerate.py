@@ -128,8 +128,8 @@ def full_workflow(project_id):
     return jsonify({"status": "uploading files", "step": "upload", "details": files[0].filename}), 200
 '''    
 
-@app.route('/full-workflow/<project_id>', methods=['POST'])
-def full_workflow(project_id):
+@app.route('/upload-train/<project_id>', methods=['POST'])
+def upload_train(project_id):
     try:
         files = request.files.getlist('files')
         if not files:
@@ -187,8 +187,8 @@ def full_workflow(project_id):
             '''
             
             # Step 3: Generate synthetic data
-            generate_response = generate_data(params)
-            yield json.dumps(generate_response) + '\n'
+            #generate_response = generate_data(params)
+            #yield json.dumps(generate_response) + '\n'
             '''
             if generate_response.status_code != 200:
                 yield json.dumps({"status": "failed", "step": "generation", "details": generate_response.json()}) + '\n'
@@ -196,6 +196,30 @@ def full_workflow(project_id):
             else:
                 yield json.dumps({"status": "completed", "step": "generation", "details": generate_response.json()}) + '\n'
             '''
+            
+        except Exception as e:
+            yield json.dumps({"error": "An unexpected error occurred: {}".format(str(e))})
+
+    return Response(workflow_generator(), content_type="application/json")
+
+@app.route('/generate/<project_id>', methods=['POST'])
+def generate(project_id):
+    try:
+        params = request.form.get('params')  # if sent as a string
+        if params:
+            params = json.loads(params)
+        if not params:
+            return jsonify({"error": "No parameters provided"}), 400
+        
+    except Exception as e:
+        return jsonify({"error": "Initialization  failed: {}".format(str(e))}), 500
+
+    def workflow_generator():
+        try:
+            
+            # Step 3: Generate synthetic data
+            generate_response = generate_data(params)
+            yield json.dumps(generate_response) + '\n'
             
         except Exception as e:
             yield json.dumps({"error": "An unexpected error occurred: {}".format(str(e))})
@@ -229,10 +253,10 @@ def download_files(project_id):
             memory_file,
             mimetype='application/zip',
             as_attachment=True,
-            download_name='synthetic_data_{}.zip'.format(project_id)
+            attachment_filename='synthetic_data_{}.zip'.format(project_id)
         )
     except Exception as e:
         return jsonify({"error": "Failed to download files: {}".format(str(e))}), 500
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)  # Expose Flask app to the network
+    app.run(debug=True, host="0.0.0.0", port=5000)  # Expose Flask app to the network
