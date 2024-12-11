@@ -241,9 +241,10 @@ def download_files(project_id):
         with zipfile.ZipFile(memory_file, 'w') as zf:
             for root, dirs, files in os.walk(synthetic_data_path):
                 for file in files:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, synthetic_data_path)  # Preserve directory structure
-                    zf.write(file_path, arcname)
+                    if file.endswith("_generated_data_train.npz"):
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, synthetic_data_path)  # Preserve directory structure
+                        zf.write(file_path, arcname)
         
         # Seek to the beginning of the memory file for serving
         memory_file.seek(0)
