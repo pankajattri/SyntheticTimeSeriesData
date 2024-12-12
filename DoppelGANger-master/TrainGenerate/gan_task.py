@@ -24,7 +24,13 @@ class GANTask(GPUTask):
         print(data_feature.shape)
         print(data_attribute.shape)
         print(data_gen_flag.shape)
-
+        print("self_noise: ", self._config["noise"])
+        print("self_feed_back: ", self._config["feed_back"])
+        print("self_aux_disc: ", self._config["aux_disc"])
+        print("self_norm: ", self._config["self_norm"])
+        if self._config["feed_back"] == "false":
+            self._config["feed_back"] = False
+        print("New self_feed_back value", self._config["feed_back"])
         if self._config["self_norm"]:
             (data_feature, data_attribute, data_attribute_outputs,
              real_attribute_mask) = \

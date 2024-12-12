@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, Response, send_file, copy_current_req
 from gan_task import GANTask
 from gan_generate_data_task import GANGenerateDataTask
 from gpu_task_scheduler.gpu_task_scheduler import GPUTaskScheduler
-
+import tensorflow as tf
 app = Flask(__name__)
 
 
@@ -163,7 +163,7 @@ def upload_train(project_id):
             yield json.dumps({
                 "message": "Files uploaded successfully and params received.",
                 "status": 200,
-                "uploaded_files": uploaded_files
+                "uploaded_files": tf.test.is_gpu_available() #uploaded_files
             }) + '\n'
             '''
             upload_response = upload_files(project_id,files)
