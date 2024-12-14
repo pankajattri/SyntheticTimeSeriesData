@@ -163,7 +163,7 @@ def upload_train(project_id):
             yield json.dumps({
                 "message": "Files uploaded successfully and params received.",
                 "status": 200,
-                "uploaded_files": tf.test.is_gpu_available() #uploaded_files
+                "uploaded_files": uploaded_files #uploaded_files
             }) + '\n'
             '''
             upload_response = upload_files(project_id,files)
