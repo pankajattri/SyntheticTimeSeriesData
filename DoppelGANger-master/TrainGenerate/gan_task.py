@@ -30,7 +30,7 @@ class GANTask(GPUTask):
         print("self_norm: ", self._config["self_norm"])
         if self._config["feed_back"] == "false":
             self._config["feed_back"] = False
-        print("New self_feed_back value", self._config["feed_back"])
+        print("New self_feed_back value: ", self._config["feed_back"])
         if self._config["self_norm"]:
             (data_feature, data_attribute, data_attribute_outputs,
              real_attribute_mask) = \
