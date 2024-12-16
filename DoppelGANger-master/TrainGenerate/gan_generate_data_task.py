@@ -28,6 +28,17 @@ class GANGenerateDataTask(GPUTask):
         print(data_gen_flag.shape)
         num_real_attribute = len(data_attribute_outputs)
 
+        # Handle string booleans coming via parameters json
+        if self._config["self_norm"] == "false":
+            self._config["self_norm"] = False
+        
+        if self._config["aux_disc"] == "false":
+            self._config["aux_disc"] = False
+        if self._config["noise"] == "false":
+            self._config["noise"] = False
+        if self._config["feed_back"] == "false":
+            self._config["feed_back"] = False
+            
         if self._config["self_norm"]:
             (data_feature, data_attribute, data_attribute_outputs,
              real_attribute_mask) = \
@@ -198,6 +209,7 @@ class GANGenerateDataTask(GPUTask):
                 split = self._config["generate_num_train_sample"]
 
                 if self._config["self_norm"]:
+                    
                     np.savez(
                         train_path_ori,
                         data_feature=features[0: split],
