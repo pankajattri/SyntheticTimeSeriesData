@@ -264,9 +264,9 @@ def download_files(project_id):
 
 def get_log_file_path(project_id, log_file_name):
     """Finds the log file path without knowing the subdirectory name."""
-    log_dir = f"/app/work/{project_id}/*/{log_file_name}"  # Wildcard for subdirectory
+    log_dir = "/app/work/{}/*/{}".format(project_id,log_file_name)  # Wildcard for subdirectory
     matching_files = glob.glob(log_dir)  # Find matching paths
-    
+    print("Matching files",matching_files)
     return matching_files[0] if matching_files else None
 
 def get_last_n_lines(file_path, n=10):
@@ -276,29 +276,28 @@ def get_last_n_lines(file_path, n=10):
             lines = file.readlines()
             return lines[-n:]  # Return the last n lines
     except FileNotFoundError:
-        return [f"Error: Log file '{file_path}' not found."]
+        return ["Error: Log file {} not found.".format(file_path)]
     except Exception as e:
-        return [f"Error reading log file: {str(e)}"]
-
-@app.route('/training_status/<project_id>/<log_file_name>/<number_of_lines>', methods=['GET'])
-def training_status(project_id, log_file_name, number_of_lines):
+        return ["Error reading log file: {}".format(str(e))]
+            
+@app.route('/training_status/<project_id>/<log_file_name>/<log_lines>', methods=['GET'])
+def training_status(project_id, log_file_name, log_lines):
     """API endpoint to check the current training status."""
-    
-    
-
-    if not project_id or not log_file_name or not number_of_lines:
+    if not project_id or not log_file_name or not log_lines:
         return jsonify({"error": "ProjectID and LOG_FILE_NAME are required"}), 400
 
-    n = int(number_of_lines)
-    # Construct the full log file path
-    
+    n = int(log_lines)    
     log_file_path = get_log_file_path(project_id, log_file_name)
-    # Check if the file exists
-    if not os.path.isfile(log_file_path):
-        return jsonify({"error": f"Log file '{log_file_name}' not found for project '{project_id}'"}), 404
-
-    log_lines = get_last_n_lines(log_file_path, n)
-    return jsonify({"ProjectID": project_id, "LOG_FILE_NAME": log_file_name, "logs": log_lines}), 200
+    if log_file_path is None:
+      return jsonify({"error": "Log file {} not found for project {}".format(log_file_name,project_id)}), 404
+    else:
+      # Check if the file exists
+      if not os.path.isfile(log_file_path):
+          return jsonify({"error": "Log file {} not found for project {}".format(log_file_name,project_id)}), 404
+  
+      else:
+        log_lines = get_last_n_lines(log_file_path, n)#["Log entry 1\n", "Log entry 2\n", "Log entry 3\n"]
+        return jsonify({"ProjectID": project_id, "LOG_FILE_NAME": log_file_name, "logs": log_lines}), 200
 
     
 if __name__ == "__main__":
