@@ -284,11 +284,12 @@ def get_last_n_lines(file_path, n=10):
 def training_status(project_id, log_file_name, number_of_lines):
     """API endpoint to check the current training status."""
     
-    n = number_of_lines
+    
 
     if not project_id or not log_file_name or not number_of_lines:
         return jsonify({"error": "ProjectID and LOG_FILE_NAME are required"}), 400
 
+    n = int(number_of_lines)
     # Construct the full log file path
     
     log_file_path = get_log_file_path(project_id, log_file_name)
@@ -297,7 +298,7 @@ def training_status(project_id, log_file_name, number_of_lines):
         return jsonify({"error": f"Log file '{log_file_name}' not found for project '{project_id}'"}), 404
 
     log_lines = get_last_n_lines(log_file_path, n)
-    return jsonify({"ProjectID": project_id, "LOG_FILE_NAME": log_file_name, "logs": log_lines})
+    return jsonify({"ProjectID": project_id, "LOG_FILE_NAME": log_file_name, "logs": log_lines}), 200
 
     
 if __name__ == "__main__":
