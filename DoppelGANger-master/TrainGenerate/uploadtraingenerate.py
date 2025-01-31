@@ -6,6 +6,7 @@ from gan_task import GANTask
 from gan_generate_data_task import GANGenerateDataTask
 from gpu_task_scheduler.gpu_task_scheduler import GPUTaskScheduler
 import tensorflow as tf
+import glob
 app = Flask(__name__)
 
 
@@ -258,6 +259,46 @@ def download_files(project_id):
         )
     except Exception as e:
         return jsonify({"error": "Failed to download files: {}".format(str(e))}), 500
+
+# Static path where logs are stored
+
+def get_log_file_path(project_id, log_file_name):
+    """Finds the log file path without knowing the subdirectory name."""
+    log_dir = f"/app/work/{project_id}/*/{log_file_name}"  # Wildcard for subdirectory
+    matching_files = glob.glob(log_dir)  # Find matching paths
+    
+    return matching_files[0] if matching_files else None
+
+def get_last_n_lines(file_path, n=10):
+    """Extracts the last n lines from a log file."""
+    try:
+        with open(file_path, "r") as file:
+            lines = file.readlines()
+            return lines[-n:]  # Return the last n lines
+    except FileNotFoundError:
+        return [f"Error: Log file '{file_path}' not found."]
+    except Exception as e:
+        return [f"Error reading log file: {str(e)}"]
+
+@app.route('/training_status/<project_id>/<log_file_name>/<number_of_lines>', methods=['GET'])
+def training_status(project_id, log_file_name, number_of_lines):
+    """API endpoint to check the current training status."""
+    
+    n = number_of_lines
+
+    if not project_id or not log_file_name or not number_of_lines:
+        return jsonify({"error": "ProjectID and LOG_FILE_NAME are required"}), 400
+
+    # Construct the full log file path
+    
+    log_file_path = get_log_file_path(project_id, log_file_name)
+    # Check if the file exists
+    if not os.path.isfile(log_file_path):
+        return jsonify({"error": f"Log file '{log_file_name}' not found for project '{project_id}'"}), 404
+
+    log_lines = get_last_n_lines(log_file_path, n)
+    return jsonify({"ProjectID": project_id, "LOG_FILE_NAME": log_file_name, "logs": log_lines})
+
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)  # Expose Flask app to the network
