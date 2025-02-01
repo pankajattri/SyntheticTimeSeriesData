@@ -437,12 +437,12 @@ class DoppelGANger(object):
                 self.g_feature_input_data_test_free_pl,
                 train=False,
                 attribute=self.given_attribute_attribute_pl)
-
+        '''
         self.generator.print_layers()
         self.discriminator.print_layers()
         if self.attr_discriminator is not None:
             self.attr_discriminator.print_layers()
-
+        '''
     def build_loss(self):
         batch_size = tf.shape(self.g_feature_input_noise_train_pl_l[0])[0]
 
